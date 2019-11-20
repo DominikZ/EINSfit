@@ -1,0 +1,37 @@
+Installation instructions for EINSfit-py
+========================================
+
+For EINSfit, the following versions are required:
+    Python: 3.6 or higher
+    NumPy: 1.16 or higher
+    lmfit: 0.9.13 or higher
+    matplotlib: 2.0 or higher
+    cycler: 0.10 or higher (normally included in matplotlib)
+    
+    
+RECOMMENDED INSTALLATION with pip:  
+-------------------------
+To install the EINSfit Python module with pip, use:
+    python setup.py sdist
+    pip install .dist/EINSfit-***VERSION***.tar.gz
+     
+To uninstall use:
+    pip uninstall EINSfit
+    
+-------------------------
+-------------------------
+
+
+NOT RECOMMENDED INSTALLATION but works:
+---------------------------------------
+To install the EINSfit Python module in a fast way with easy_install, use:
+
+    python setup.py build
+    python setup.py install
+    
+---------------------------------------
+---------------------------------------
+  
+
+Dominik Zeller <DominikZ@posteo.eu>
+Last Update: 2019-November-15

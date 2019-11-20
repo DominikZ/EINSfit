@@ -1,0 +1,343 @@
+Help on class EINSfit in EINSfit:
+
+EINSfit.EINSfit = class EINSfit(builtins.object)
+ |  EINSfit.EINSfit(datafile, name=None, data_type='elascan', dic_data_to_use=None, save_dir_path=None)
+ |  
+ |  Fits different EINS models (EISF vs Q) to one data set of one or multiple temperature scans.
+ |  Data set has to be defined via a Path (string) datafile='your_elascan_baseName' or 'your_save_directory'.
+ |  The datafile has to be 
+ |  - the prefix(='your_elascan_BaseName') of the two elascan output files from LAMP (prefix+'_q.dat' and prefix+'_t.dat') 
+ |  or
+ |  - the directory of your previously saved data set. 
+ |      --> This will ONLY load the raw input data + used input dictionary 
+ |      --> This will NOT load fit results or the configuration file (=config_dic), if wanted, load saved config file with read_config_file()
+ |  or
+ |  - data saved in a dictionary with entries 'raw_data','raw_data_err','raw_q','raw_T'
+ |      --> data has to be a numpy array: numpy.ndarray
+ |      --> 'raw_q' and 'raw_T' are 1D arrays
+ |      --> 'raw_data' and 'raw_data_err' are 2D arrays, axis1=len(raw_T) and axis2=len(raw_q)
+ |  
+ |  Parameters
+ |  ----------
+ |  datafile : string or dict, mandatory
+ |      "data_type" == 'elascan'  : string = 'your_elascan_BaseName' (without '_q.dat' or '_t.dat')
+ |      "data_type" == 'save'     : string = 'your_save_BaseDirectory'
+ |      "data_type" == 'numpy_dic': dict   = {'raw_data': np.ndarray[q,T],'raw_data_err': np.ndarray[q,T],'raw_T': np.ndarray,'raw_q': np.ndarray}
+ |  
+ |  name : string, optional if not "data_type" = 'save'
+ |      Name you want to give your data set. 
+ |      ! Must be set if "data_type" = 'save'
+ |  
+ |  data_type : 'elascan' or 'save' or 'numpy_dic', optional
+ |      Defines your data input type.
+ |      'elascan'   = load elascan output files from LAMP
+ |      'save'      = load directory of your previously saved data set
+ |      'numpy_dic' = load data dictionary which has to be defined in the input variable 'datafile'
+ |  
+ |  dic_data_to_use : {'T_start': float, 'T_end': float, 'Q_min': float, 'Q_max': float, 'delete_specific_Q-values_list': [] } , optional
+ |      Dictionary which defines the used data from the loaded data set.
+ |      All values are optional, if set to None or not defined all values are used.
+ |      'T_start' : first used temperature value (type: float)
+ |      'T_end' : last used temperature value (type: float)
+ |      'Q_min' : first used q value (type: float)
+ |      'Q_max' : last used q value (type: float)
+ |      'delete_specific_T-values_list' : list of T values which should be excluded, has to be the exact value! (type list)
+ |      'delete_specific_Q-values_list' : list of q values which should be excluded, has to be the exact value! (type list)
+ |      
+ |  
+ |  save_dir_path : string, optional
+ |      Defines where you want to save your data (Base directory).
+ |  
+ |  Attributes
+ |  ----------
+ |  name : string, name of your data set
+ |  
+ |  Readable Attributes (only a copy of the original variable is returned)
+ |  --------------------
+ |  config_dic : dict, dictionary of config for data fitting,
+ |      To change this dictionary, use set_config_dic() or read_config_file()
+ |      For a nice overview over this dictionary, use print_config()
+ |  
+ |  raw_data_type : string, return the loaded data type ('elascan' or 'save')
+ |  raw_file_path : string, return loaded data set path
+ |  
+ |  raw_T : numpy.ndarray, return raw temperature data
+ |  raw_q : numpy.ndarray, return raw Q data
+ |  raw_data : numpy.ndarray, return raw EISF data as 2D numpy.array with [T,Q]
+ |  raw_data_err : numpy.ndarray, return raw EISF data error as 2D numpy.array with [T,Q]
+ |  
+ |  used_T : numpy.ndarray, return used temperature data
+ |  used_q : numpy.ndarray, return used Q data
+ |  used_data : numpy.ndarray, return used EISF data as 2D numpy.array with [T,Q]
+ |  used_data_err : numpy.ndarray, return used EISF data error as 2D numpy.array with [T,Q]
+ |  used_data_log : numpy.ndarray, return used log(EISF data) as 2D numpy.array with [T,Q]
+ |  used_data_err_log : numpy.ndarray, return used log(EISF data) error as 2D numpy.array with [T,Q]
+ |  used_Tmin : float, return first allowed T value in comparision to raw data
+ |  used_Tmax : float, return last  allowed T value in comparision to raw data
+ |  used_qmin : float, return first allowed Q value in comparision to raw data
+ |  used_qmax : float, return last  allowed Q value in comparision to raw data
+ |  
+ |  Methods defined here:
+ |  
+ |  __del__(self)
+ |      Remove created dictionary if it is empty.
+ |  
+ |  __init__(self, datafile, name=None, data_type='elascan', dic_data_to_use=None, save_dir_path=None)
+ |      Initializes class object, for help see help(EINS_fit)
+ |  
+ |  get_config_dic(self, record_nb=None)
+ |      Returns copy of config saved in config dictionary, either the current config or from a saved record.
+ |      Parameters:
+ |      record_nb : int, optional
+ |          Define from which record number you want to read the config (-1 = last record).
+ |          If None, current config is printed.
+ |  
+ |  get_nice_results_dic(self, record_nb=-1, silent=False) -> dict
+ |      Returns nice dictionary with results for given record_nb.
+ |      Parameters
+ |      ----------
+ |      record_nb : int, optional
+ |          Define from which record number you want to have the results (-1 = last record).
+ |      silent : bool, optional
+ |          If True, no output is printed to the terminal.
+ |  
+ |  get_save_dir(self)
+ |  
+ |  give_fit_value(self, x, t=0, model='GA', record_nb=-1, GA_lin=False)
+ |      Returns the y [=EISF(q)] value(s) to given x [=q] value(s) of requested model.
+ |      Parameters:
+ |      -----------
+ |      x : float / array (or list) of floats
+ |      t : int
+ |          Number of temperature set (0=first, len(self._used_T)=last)
+ |      model : 'GA' or 'PK' or 'Yi' or 'Do' or 'linAllQ', optional
+ |          Name of desired model.
+ |      record_nb : int, optional
+ |          Define from which record number you want to have the results. (-1 = last record).
+ |      GA_lin: bool, optional
+ |          If True, function gives values of linear fit defined via ln(EISF) vs Q**2, e.g. for such a plot:
+ |              ln(EISF(Q))=Q**2 * MSD + log(EISF(0))
+ |               --> ln(EISF(x)) = give_fit_value(x=x**2, GA_lin=True)
+ |          If False, definition as for other models:
+ |              EISF(Q)=exp(- Q**2 * MSD + EISF(0))
+ |               --> EISF(x) = give_fit_value(x=x, GA_lin=False)  (since internally x is squared)
+ |  
+ |  load_lmfit_results_local(self) -> dict
+ |      Loads dictionary of lmfit results (pickle file) saved in default save path and returns the dictionary file.
+ |  
+ |  load_nice_results_dic_local(self) -> dict
+ |      Loads dictionary of nice results (pickle or json file) saved in default save path and returns the dictionary file.
+ |  
+ |  plot_results(self, record_nb=-1, save=False, close_all=False, save_path=None, silent=False, outputfile_type='png', outputfile_dpi=200)
+ |      Plots the results of the fitted data set.
+ |      Parameters:
+ |      -----------
+ |      record_nb : int, optional
+ |          Define from which record number you want to plot the results. (-1 = last record).
+ |      save : bool, optional
+ |          If True, saves the plots in the default save directory (can be changed with set_save_dir() ) 
+ |              or in path given in "save_path" parameter.
+ |      close_all : bool, optional
+ |          If True, closes all plotted figures after execution. Suggested if parameter "save" = True.
+ |      save_path : string, optional
+ |          Directory where plotted figures are saved. If None, the default save directory (can be changed with set_save_dir() ) is used.
+ |      silent : bool, optional
+ |          If True, no output is printed to the terminal.
+ |      outputfile_type : string, optional
+ |          Define the type of your saved output, e.g. '.png', '.jpg', '.pdf'
+ |      outputfile_dpi : int, optional
+ |          Define the dpi (dots per inch) of your saved output, e.g. 200, 300, 600
+ |  
+ |  print_config(self, record_nb=None)
+ |      Prints config saved in config dictionary, either the current config or from a saved record.
+ |      Parameters:
+ |      record_nb : int, optional
+ |          Define from which record number you want to read the config (-1 = last record).
+ |          If None, current config is printed.
+ |  
+ |  print_diff_in_config(self, record_nb1=0, record_nb2=-1, all=False, record_nb_ref=0)
+ |      Prints the difference between the config of two records.
+ |      For differences between two different config dictionaries of different samples, use print_diff_between_two_dics()
+ |      
+ |      Parameters:
+ |      -----------
+ |      record_nb1 : int, optional
+ |          Record number of first config to compare. ["0" = first config, "-1" = last config]
+ |      record_nb2 : int, optional
+ |          Record number of second config to compare. ["0" = first config, "-1" = last config]
+ |      all : bool, optional
+ |          Get differences of configs of all records. First record is the reference config.
+ |      record_nb_ref : int, optional
+ |          Record number of reference config -> all available configs are compared to this config. ["0" = first config, "-1" = last config]
+ |  
+ |  print_nb_of_records(self)
+ |      Prints the number of records saved.
+ |  
+ |  read_config_file(self, filename=None)
+ |      Reads the config from given file and overwrite config dictionary with new Values.
+ |      Parameters:
+ |      -----------
+ |      filename : string
+ |          Config file location.
+ |  
+ |  run_fit(self)
+ |      Fits the data set. 
+ |      Fits are done with the config defined in self.config_dic dictionary. 
+ |      self.config_dic can be set via read_config_file() or set_config_dic().
+ |      The results and configurations are saved in a new record. To get the number of available records use: print_nb_of_records.
+ |  
+ |  save_all(self, record_nb=-1, save_path=None, plot=True, silent=True)
+ |      Saves data set, config, results and if wanted also figures.
+ |      Parameters:
+ |      -----------
+ |      record_nb : int, optional
+ |          Define from which record number you want to save the results. (-1 = last record).
+ |      save_path : string, optional
+ |          Base directory where results are saved. If None, the default save directory (can be changed with set_save_dir() ) is used.
+ |      plot : bool, optional
+ |          If False, figures ar not plotted and are not saved.
+ |      silent : bool, optional
+ |          If False, all output is printed to the terminal.
+ |  
+ |  save_config_file(self, record_nb=None, save_path=None, silent=False)
+ |      Saves the config dictionary to a file.
+ |      Parameters:
+ |      -----------
+ |      record_nb : int, optional
+ |          Define from which record number you want to have the config (-1 = last record).
+ |      save_path : string, optional
+ |          Directory where config file is saved (save_path / 'config_file_SAMPLENAME.ini'). If None, the default save directory (can be changed with set_save_dir() ) is used.
+ |      silent : bool, optional
+ |          If True, no output is printed to the terminal.
+ |  
+ |  save_input(self, save_path=None, silent=False)
+ |      Saves the raw data and if used data is different, the dictionary of the used data
+ |      Parameters:
+ |      -----------
+ |      save_path : string, optional
+ |          Directory where text files are saved. If None, the default save directory (can be changed with set_save_dir() ) is used.
+ |      silent : bool, optional
+ |          If True, no output is printed to the terminal.
+ |  
+ |  save_lmfit_results(self, record_nb=-1, save_path=None, silent=False)
+ |      Save dictionary of lmfit results of given record number as pickle file.
+ |      
+ |      Parameters:
+ |      -----------
+ |      record_nb : int, optional
+ |          Define from which record number you want to plot the results. (-1 = last record).
+ |      save_path : string, optional
+ |          Directory where the pickle file is saved. If None, the default save directory (can be changed with set_save_dir() ) is used.
+ |      silent : bool, optional
+ |          If True, no output is printed to the terminal.
+ |  
+ |  save_nice_results_dic(self, record_nb=-1, file_type='json', save_path=None, silent=False)
+ |      Save dictionary of nice results of given record number as .pickle or .json file.
+ |      
+ |      Parameters:
+ |      -----------
+ |      record_nb : int, optional
+ |          Define from which record number you want to plot the results. (-1 = last record).
+ |      file_type : 'pickle' or 'json', optional
+ |          Define the file type of the saved dictionary file.
+ |      save_path : string, optional
+ |          Directory where the pickle file is saved. If None, the default save directory (can be changed with set_save_dir() ) is used.
+ |      silent : bool, optional
+ |          If True, no output is printed to the terminal.
+ |  
+ |  save_results(self, record_nb=-1, save_path=None, silent=False)
+ |      Saves the results of the fitted data set to two text files (prefix+'.txt' and prefix+'-vals.txt'). prefix=name_data_set + model_type
+ |      Parameters:
+ |      -----------
+ |      record_nb : int, optional
+ |          Define from which record number you want to plot the results. (-1 = last record).
+ |      save_path : string, optional
+ |          Directory where text files are saved. If None, the default save directory (can be changed with set_save_dir() ) is used.
+ |      silent : bool, optional
+ |          If True, no output is printed to the terminal.
+ |  
+ |  set_config_dic(self, dic)
+ |      Set one or more values to config dictionary via a nested dictionary.
+ |  
+ |  set_save_dir(self, save_dir_path)
+ |      Sets a new Base directory where data is saved as default.
+ |      Parameters
+ |      ----------
+ |      save_dir_path : string
+ |          Defines where you want to save your data (Base directory).
+ |  
+ |  ----------------------------------------------------------------------
+ |  Static methods defined here:
+ |  
+ |  load_lmfit_results(loadfile) -> dict
+ |      Loads dictionary of lmfit results (pickle file) and returns the dictionary file.
+ |      
+ |      Parameters:
+ |      -----------
+ |      loadfile : string
+ |          Filename of lmfit results dictionary with or without supported suffix.
+ |  
+ |  load_nice_results_dic(loadfile) -> dict
+ |      Loads dictionary of nice results (pickle or json file) and returns the dictionary file.
+ |      
+ |      Parameters:
+ |      -----------
+ |      loadfile : string
+ |          Filename of nice results dictionary with or without supported suffix.
+ |  
+ |  print_diff_between_two_dics(d1, d2, as_string=False)
+ |      Prints the difference between two dictionaries d1 and d2; d1 and d2 can be interchanged.
+ |      Only works/tested with config_dic and fitting_dic
+ |      
+ |      Parameters:
+ |      -----------
+ |      d1 : dict, first dictionary
+ |      d2 : dict, second dictionary
+ |      as_string : bool, optional
+ |          If True, function returns string, else the result is printed to stdout (normally terminal).
+ |  
+ |  ----------------------------------------------------------------------
+ |  Data descriptors defined here:
+ |  
+ |  __dict__
+ |      dictionary for instance variables (if defined)
+ |  
+ |  __weakref__
+ |      list of weak references to the object (if defined)
+ |  
+ |  config_dic
+ |  
+ |  name
+ |  
+ |  raw_T
+ |  
+ |  raw_data
+ |  
+ |  raw_data_err
+ |  
+ |  raw_data_type
+ |  
+ |  raw_file_path
+ |  
+ |  raw_q
+ |  
+ |  used_T
+ |  
+ |  used_Tmax
+ |  
+ |  used_Tmin
+ |  
+ |  used_data
+ |  
+ |  used_data_err
+ |  
+ |  used_data_err_log
+ |  
+ |  used_data_log
+ |  
+ |  used_q
+ |  
+ |  used_qmax
+ |  
+ |  used_qmin
+
