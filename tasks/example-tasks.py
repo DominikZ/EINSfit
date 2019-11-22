@@ -19,11 +19,11 @@ my_sample.save_all()          #save results
 my_samples=[]
 results_dic=[]
 sample_names=['EISF_sample1','EISF_sample2']
-for sample in my_samples:
-    sample.append(EINSfit(sample))
-    sample[-1].read_config_file('config-all.ini')
-    sample[-1].run_fit()
-    sample[-1].save_all()
+for sample in sample_names:
+    my_samples.append(EINSfit(sample))
+    my_samples[-1].read_config_file('config-all.ini')
+    my_samples[-1].run_fit()
+    my_samples[-1].save_all()
 #save ordered results in list of dictionaries
 for sample in my_samples:
     results_dic.append(sample.get_nice_results_dic())
