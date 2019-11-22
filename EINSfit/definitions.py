@@ -2208,6 +2208,8 @@ class EINSfit:
             
         if close_all:
             plt.close('all')
+        else: #needed in case plt.isinteractive() == False; can be turned on/off via plt.ion()/plt.ioff()
+            plt.show() 
         
         return
 
