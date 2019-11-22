@@ -535,7 +535,7 @@ class EINSfit:
         datafile : string or dict, mandatory
             "data_type" == 'elascan'  : string = 'your_elascan_BaseName' (without '_q.dat' or '_t.dat')
             "data_type" == 'save'     : string = 'your_save_BaseDirectory'
-            "data_type" == 'numpy_dic': dict   = {'raw_data': np.ndarray[q,T],'raw_data_err': np.ndarray[q,T],'raw_T': np.ndarray,'raw_q': np.ndarray}
+            "data_type" == 'numpy_dic': dict   = {'raw_data': np.ndarray[Q,T],'raw_data_err': np.ndarray[Q,T],'raw_T': np.ndarray,'raw_q': np.ndarray}
 
         name : string, optional if not "data_type" = 'save'
             Name you want to give your data set. 
@@ -547,15 +547,15 @@ class EINSfit:
             'save'      = load directory of your previously saved data set
             'numpy_dic' = load data dictionary which has to be defined in the input variable 'datafile'
         
-        dic_data_to_use : {'T_start': float, 'T_end': float, 'Q_min': float, 'Q_max': float, 'delete_specific_Q-values_list': [] } , optional
+        dic_data_to_use : {'T_start': float, 'T_end': float, 'Q_min': float, 'Q_max': float, 'delete_specific_T-values_list': [], 'delete_specific_Q-values_list': [] } , optional
             Dictionary which defines the used data from the loaded data set.
             All values are optional, if set to None or not defined all values are used.
             'T_start' : first used temperature value (type: float)
             'T_end' : last used temperature value (type: float)
-            'Q_min' : first used q value (type: float)
-            'Q_max' : last used q value (type: float)
+            'Q_min' : first used Q value (type: float)
+            'Q_max' : last used Q value (type: float)
             'delete_specific_T-values_list' : list of T values which should be excluded, has to be the exact value! (type list)
-            'delete_specific_Q-values_list' : list of q values which should be excluded, has to be the exact value! (type list)
+            'delete_specific_Q-values_list' : list of Q values which should be excluded, has to be the exact value! (type list)
             
 
         save_dir_path : string, optional
